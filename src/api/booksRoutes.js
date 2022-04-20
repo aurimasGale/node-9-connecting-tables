@@ -1,4 +1,5 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 const { dbClient } = require('../config');
 
 const booksRoutes = express.Router();
@@ -25,20 +26,19 @@ booksRoutes.post('/book', async (req, res) => {
     await dbClient.close();
   }
 });
-booksRoutes.post('/book', async (req, res) => {
+booksRoutes.get('/book', async (req, res) => {
   try {
     // prisijungti
     await dbClient.connect();
     // atlikti veiksma
     console.log('connected');
     // paimti gautus duomenis ir sukurti nauja knyga
-    console.log(req.body);
-    const newBookObj = req.body;
+
     const collection = dbClient.db('library').collection('books');
-    const insertResult = await collection.insertOne(newBookObj);
-    res.status(201).json(insertResult);
+    const allbooksArr = await collection.find().toArray();
+    res.status(201).json(allbooksArr);
   } catch (error) {
-    console.error('error in creating a book', error);
+    console.error('error in getting all books', error);
     res.status(500).json('something is wrong');
   } finally {
     // uzdaryti prisijungima
@@ -135,6 +135,55 @@ booksRoutes.get('/book-authors', async (req, res) => {
     res.status(201).json(authorsWithBooksArray);
   } catch (error) {
     console.error('error in getting all books', error);
+    res.status(500).json('something is wrong');
+  } finally {
+    // uzdaryti prisijungima
+    await dbClient.close();
+  }
+});
+
+// grazina knyga pagal bookId
+
+booksRoutes.get('/book/:bookId', async (req, res) => {
+  const { bookId } = req.params;
+  console.log(bookId);
+  try {
+    // prisijungti
+    await dbClient.connect();
+    // atlikti veiksma
+    console.log('connected');
+    // paimti gautus duomenis ir sukurti nauja knyga
+
+    const collection = dbClient.db('library').collection('books');
+    const foundBook = await collection.findOne(ObjectId(bookId));
+    console.log('foundBook ===', foundBook);
+    res.status(201).json(foundBook);
+  } catch (error) {
+    console.error('error in getting all books', error);
+    res.status(500).json('something is wrong');
+  } finally {
+    // uzdaryti prisijungima
+    await dbClient.close();
+  }
+});
+
+// DELETE book, kurios id === delBookId
+booksRoutes.delete('/book/:delBookId', async (req, res) => {
+  const { delBookId } = req.params;
+  console.log(delBookId);
+  try {
+    // prisijungti
+    await dbClient.connect();
+    // atlikti veiksma
+    console.log('connected');
+    // paimti gautus duomenis ir sukurti nauja knyga
+
+    const collection = dbClient.db('library').collection('books');
+    const deleteResult = await collection.deleteOne({ _id: ObjectId(delBookId) });
+    console.log('foundBook ===', deleteResult);
+    res.status(200).json(deleteResult);
+  } catch (error) {
+    console.error('error in deleting specific book', error);
     res.status(500).json('something is wrong');
   } finally {
     // uzdaryti prisijungima

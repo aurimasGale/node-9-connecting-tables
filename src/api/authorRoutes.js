@@ -3,7 +3,8 @@ const { ObjectId } = require('mongodb');
 const { dbClient } = require('../config');
 
 const authorRoutes = express.Router();
-
+// routes
+// post author
 authorRoutes.post('/author', async (req, res) => {
   try {
     // prisijungti
@@ -31,7 +32,7 @@ authorRoutes.post('/author', async (req, res) => {
     await dbClient.close();
   }
 });
-
+// get author
 authorRoutes.get('/author', async (req, res) => {
   try {
     // prisijungti
@@ -48,6 +49,25 @@ authorRoutes.get('/author', async (req, res) => {
     res.status(500).json('something is wrong');
   } finally {
     // uzdaryti prisijungima
+    await dbClient.close();
+  }
+});
+
+// get specific author by name
+authorRoutes.get('/author/:author', async (req, res) => {
+  const name = req.params.author;
+  console.log(name);
+  try {
+    await dbClient.connect();
+    console.log('connected');
+
+    const collection = dbClient.db('library').collection('authors');
+    const allAuthorsArr = await collection.find({ name }).toArray();
+    res.status(201).json(allAuthorsArr);
+  } catch (error) {
+    console.error('error in getting specific author', error);
+    res.status(500).json('something is wrong');
+  } finally {
     await dbClient.close();
   }
 });
