@@ -5,12 +5,21 @@ POST http://localhost:3001/api/book
 Content-Type: application/json
 
 {
-     "title":"book 4", "year": 1997, "rating": 2
+     "title":"book 15", "year": 2015, "rating": 3
 }
 
 ###
 GET http://localhost:3001/api/book
 ###
+#### get single book
+GET http://localhost:3001/api/book/62605176a79950379ea93370
+
+###
+#### delete single book
+DELETE http://localhost:3001/api/book/626056c9a2bb49c5fed769d5
+
+###
+
 POST http://localhost:3001/api/author
 Content-Type: application/json
 
