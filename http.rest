@@ -1,1 +1,27 @@
-GET http://localhost:3000/api/users
+GET http://localhost:3001/api/users
+###
+
+POST http://localhost:3001/api/book
+Content-Type: application/json
+
+{
+     "title":"book 4", "year": 1997, "rating": 2
+}
+
+###
+GET http://localhost:3001/api/book
+###
+POST http://localhost:3001/api/author
+Content-Type: application/json
+
+{
+    "name":"Jannet book3", "town": "Vilnius", "bookId": "625f507ce069d761556af22c" 
+}
+###
+GET http://localhost:3001/api/author
+###
+GET http://localhost:3001/api/book-authors
+###
+GET http://localhost:3001/api/book-agg2
+###
+
