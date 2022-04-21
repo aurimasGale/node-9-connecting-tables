@@ -1,6 +1,8 @@
+/* eslint-disable comma-dangle */
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const { dbClient } = require('../config');
+const { getArrayDb } = require('../helper');
 
 const authorRoutes = express.Router();
 // routes
@@ -34,23 +36,12 @@ authorRoutes.post('/author', async (req, res) => {
 });
 // get author
 authorRoutes.get('/author', async (req, res) => {
-  try {
-    // prisijungti
-    await dbClient.connect();
-    // atlikti veiksma
-    console.log('connected');
-    // paimti gautus duomenis ir sukurti nauja knyga
-
-    const collection = dbClient.db('library').collection('authors');
-    const allAuthorsArr = await collection.find().toArray();
-    res.status(201).json(allAuthorsArr);
-  } catch (error) {
-    console.error('error in getting all books', error);
-    res.status(500).json('something is wrong');
-  } finally {
-    // uzdaryti prisijungima
-    await dbClient.close();
+  const authorArr = await getArrayDb('authors');
+  if (authorArr === false) {
+    res.status(500).json('Somethig went wrong');
+    return;
   }
+  res.json(authorArr);
 });
 
 // get specific author by name
@@ -72,4 +63,58 @@ authorRoutes.get('/author/:author', async (req, res) => {
   }
 });
 
+// PATCH /api/author/:authorId - atnaujingti varda
+authorRoutes.patch('/author/:authorId', async (req, res) => {
+  // updateOne({filterObj/query}, {$set:{name:"James"}})
+  const { authorId } = req.params;
+  const { newName } = req.body;
+  try {
+    // prisijungti
+    await dbClient.connect();
+    // atlikti veiksma
+    console.log('connected');
+    // paimti gautus duomenis ir sukurti nauja knyga
+
+    const collection = dbClient.db('library').collection('authors');
+    const updateResult = await collection.updateOne(
+      { _id: ObjectId(authorId) },
+      { $set: { name: newName } }
+    );
+    res.status(201).json(updateResult);
+  } catch (error) {
+    console.error('error in updating authors name', error);
+    res.status(500).json('something is wrong');
+  } finally {
+    // uzdaryti prisijungima
+    await dbClient.close();
+  }
+});
+
+// eslint-disable-next-line max-len
+// PATCH /api/author/add-book/:authorId - prideda viena knyga , kurios id === authorId i bookId masyva
+authorRoutes.patch('/author/add-book/:authorId', async (req, res) => {
+  // updateOne({filterObj/query}, {$set:{name:"James"}})
+  const { authorId } = req.params;
+  const { newName } = req.body;
+  try {
+    // prisijungti
+    await dbClient.connect();
+    // atlikti veiksma
+    console.log('connected');
+    // paimti gautus duomenis ir sukurti nauja knyga
+
+    const collection = dbClient.db('library').collection('authors');
+    const updateResult = await collection.updateOne(
+      { _id: ObjectId(authorId) },
+      { $set: { name: newName } }
+    );
+    res.status(201).json(updateResult);
+  } catch (error) {
+    console.error('error in updating authors name', error);
+    res.status(500).json('something is wrong');
+  } finally {
+    // uzdaryti prisijungima
+    await dbClient.close();
+  }
+});
 module.exports = authorRoutes;

@@ -12,7 +12,7 @@ Content-Type: application/json
 GET http://localhost:3001/api/book
 ###
 #### get single book
-GET http://localhost:3001/api/book/62605176a79950379ea93370
+GET http://localhost:3001/api/book/625f46310b760b9fccd0f252
 
 ###
 #### delete single book
@@ -34,3 +34,39 @@ GET http://localhost:3001/api/book-authors
 GET http://localhost:3001/api/book-agg2
 ###
 
+PATCH http://localhost:3001/api/author/625f553705d2cf170560ab75
+Content-Type: application/json
+
+{
+    "newName":"James bk3001"
+}
+###
+#### CAO
+GET http://localhost:3001/api/cao-users
+
+###
+POST http://localhost:3001/api/cao-users
+Content-Type: application/json
+
+{
+    "name":"Jannet ", "email": "Jannet@email.com" 
+     
+}
+
+###
+DELETE http://localhost:3001/api/cao-users/62608e33bf21845f672e7525
+
+###
+GET http://localhost:3001/api/cao-comments
+
+###
+
+POST http://localhost:3001/api/cao-comments
+Content-Type: application/json
+
+{
+    "user_id": "62607a86b737d1dd3a7e1ec1", "date": "2022-10-05", "comment": "maybe its enough"
+}
+
+###
+GET http://localhost:3001/api/cao-comments/comments

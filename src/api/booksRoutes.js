@@ -1,6 +1,7 @@
 const express = require('express');
 const { ObjectId } = require('mongodb');
 const { dbClient } = require('../config');
+const { getArrayDb } = require('../helper');
 
 const booksRoutes = express.Router();
 
@@ -28,21 +29,10 @@ booksRoutes.post('/book', async (req, res) => {
 });
 booksRoutes.get('/book', async (req, res) => {
   try {
-    // prisijungti
-    await dbClient.connect();
-    // atlikti veiksma
-    console.log('connected');
-    // paimti gautus duomenis ir sukurti nauja knyga
-
-    const collection = dbClient.db('library').collection('books');
-    const allbooksArr = await collection.find().toArray();
-    res.status(201).json(allbooksArr);
+    const booksArr = await getArrayDb('books');
+    res.json(booksArr);
   } catch (error) {
-    console.error('error in getting all books', error);
-    res.status(500).json('something is wrong');
-  } finally {
-    // uzdaryti prisijungima
-    await dbClient.close();
+    res.status(500).json('Somethig went wrong');
   }
 });
 // grazina visas knygas
@@ -178,7 +168,7 @@ booksRoutes.delete('/book/:delBookId', async (req, res) => {
     console.log('connected');
     // paimti gautus duomenis ir sukurti nauja knyga
 
-    const collection = dbClient.db('library').collection('books');
+    const collection = dbClient.db('library').collection('comments');
     const deleteResult = await collection.deleteOne({ _id: ObjectId(delBookId) });
     console.log('foundBook ===', deleteResult);
     res.status(200).json(deleteResult);
